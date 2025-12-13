@@ -1,7 +1,8 @@
-import { Layout, Select, Space, Button, Modal } from 'antd';
+import { Layout, Select, Space, Button, Modal, Drawer } from 'antd';
 import { useCrypto } from '../../context/crypto-context';
 import { useState, useEffect } from 'react';
 import CoinInfoModal from '../CoinInfoModal';
+import AddAsset from '../AddAsset';
 
 
 const headerStyle = {
@@ -19,25 +20,25 @@ export default function AppHeader() {
 
     const [select, setSelect] = useState(false)
     const [coin, setCoin] = useState(null)
-    
     const [modal, setModal] = useState(false)
+    const [drawer, setDrawer] = useState(false)
     const { crypto } = useCrypto()
 
     useEffect(() => {
         const keypress = (event) => {
-        if (event.key == '/') {
-            setSelect(prev => !prev)
-        }
+            if (event.key == '/') {
+                setSelect(prev => !prev)
+            }
         }
         document.addEventListener('keypress', keypress)
         return () => document.removeEventListener('keypress', keypress)
     }, [])
 
 
-    function handleSelect() {
+    function handleSelect(value) {
+        setSelect(prev => !prev)
         setCoin(crypto.find(c => c.id == value))
         setModal(true)
-        setSelect(false)
     }
     
     return (
@@ -60,7 +61,7 @@ export default function AppHeader() {
                 )}
             />
 
-            <Button type="primary">Add Asset</Button>
+            <Button type="primary" onClick={() => setDrawer(true)}>Add Asset</Button>
 
             <Modal
                 open={modal}
@@ -69,6 +70,17 @@ export default function AppHeader() {
             >
                 <CoinInfoModal coin={coin}/>
             </Modal>
+
+            <Drawer
+                style={{ width: 400 }}
+                title="Add Asset"
+                onClose={() => setDrawer(false)}
+                open={drawer}
+                destroyOnHidden
+            >
+                <AddAsset onClose={() => setDrawer(false)} />
+            </Drawer>
+
         </Layout.Header>
     )
 }
