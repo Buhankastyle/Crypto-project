@@ -1,9 +1,7 @@
-import { Layout, Card, Statistic, List, Typography, Spin, Tag} from 'antd';
+import { Layout, Card, Statistic, List, Typography, Tag} from 'antd';
 import { ArrowDownOutlined, ArrowUpOutlined } from '@ant-design/icons';
-import { useEffect, useState } from 'react';
-import {fakeCryptoFetch }from '../../api';
-import {fakeCryptoAssets} from '../../api';
-import { percentDiffrence, capitalize} from '../../utilus';
+import {capitalize} from '../../utilus';
+import { useCrypto } from '../../context/crypto-context';
 const siderStyle = {
    padding: '1rem',
 };
@@ -11,42 +9,11 @@ const siderStyle = {
 
 export default function AppSider() {
 
-    const [load, setLoad] = useState(false);
-    const [crypto, setCrypto] = useState([]);
-    const [assetsFetch, setAssetsFetch] = useState([]);
-
-    useEffect(() => {
-        async function preload() {
-            setLoad(true)
-            const { result } = await fakeCryptoFetch();
-            const assets = await fakeCryptoAssets();
-            setAssetsFetch(
-                assets.map((asset) => {
-                
-                    const coin = result.find((c) => c.id === asset.id);
-                    
-                    return {
-                        grow: asset.price < coin.price,
-                        growPercent: percentDiffrence(asset.price, coin.price),
-                        totalAmount: asset.amount * coin.price,
-                        totalProfit: asset.amount * coin.price - asset.amount * asset.price,
-                        ...asset,
-                    }
-                })
-            );
-            setCrypto(result)
-            setLoad(false)
-        }
-        preload()
-    }, [])
-
-    if (load) {
-        return   <Spin fullscreen />
-    }
+    const { assets } = useCrypto()
 
     return (
         <Layout.Sider width="40%" style={siderStyle}>
-            {assetsFetch.map((asset) => (
+            {assets.map((asset) => (
                 <Card key={asset.id} style={{ marginBottom: '1rem' }}>
                     <Statistic  
                         title={capitalize(asset.id)}
@@ -68,10 +35,6 @@ export default function AppSider() {
                                 value: asset.amount, 
                                 isPlain: true,
                             },
-                            // {
-                            //     title: 'Differnce', 
-                            //     value: asset.growPercent,
-                            // },
                         ]}
                         size = 'small'
                         renderItem={item => (

@@ -13,6 +13,6 @@ export function fakeCryptoAssets() {
     return new Promise(resolve => {
         setTimeout(() => {
             resolve(cryptoAssets)
-        }, 1)
+        }, )
     })
 }
