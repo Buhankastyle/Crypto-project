@@ -87,8 +87,8 @@ export default function AddAsset({onClose}) {
     <Form
         form ={form}
         name="basic"
-        labelCol={{ span: 4 }}
-        wrapperCol={{ span: 10 }}
+        labelCol={{ span: 6 }}
+        wrapperCol={{ span: 14 }}
         style={{ maxWidth: 600 }}
         onFinish={onFinish}
         validateMessages={validateMessages}
